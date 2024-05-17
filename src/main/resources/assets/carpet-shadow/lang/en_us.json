@@ -1,8 +1,5 @@
 {
-  // Categories:
   "carpet.category.shadow_items": "shadow_items",
-
-  // Rules:
 
   "carpet.rule.shadowItemMode.desc": "Shadow Items Action over Unloading: ",
   "carpet.rule.shadowItemMode.extra.0": "UNLINK -> default vanilla ( will also disable the mod )",

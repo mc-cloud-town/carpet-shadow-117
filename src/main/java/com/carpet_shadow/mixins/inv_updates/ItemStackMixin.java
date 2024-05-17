@@ -20,31 +20,28 @@ import java.util.Set;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements InventoryItem {
+  @Unique
+  Set<Pair<Inventory, Integer>> slots = new HashSet<>();
 
-    @Unique
-    Set<Pair<Inventory,Integer>> slots = new HashSet<>();
+  @Override
+  public Collection<Inventory> carpet_shadow$getInventories() {
+    return slots.stream().map(Pair::getLeft).toList();
+  }
 
-    @Override
-    public Collection<Inventory> carpet_shadow$getInventories() {
-        return slots.stream().map(Pair::getLeft).toList();
+  @Override
+  public void carpet_shadow$addSlot(Inventory inventory, int slot) {
+    slots.add(new ImmutablePair<>(inventory, slot));
+  }
+
+  @Override
+  public void carpet_shadow$removeSlot(Inventory inventory, int slot) {
+    slots.remove(new ImmutablePair<>(inventory, slot));
+  }
+
+  @Inject(method = "setCount", at = @At("RETURN"))
+  public void propagate_update(int count, CallbackInfo ci) {
+    if (CarpetShadowSettings.shadowItemUpdateFix) {
+      Globals.toUpdate.addAll(carpet_shadow$getInventories());
     }
-
-    @Override
-    public void carpet_shadow$addSlot(Inventory inventory, int slot) {
-        slots.add(new ImmutablePair<>(inventory,slot));
-    }
-
-    @Override
-    public void carpet_shadow$removeSlot(Inventory inventory, int slot) {
-        slots.remove(new ImmutablePair<>(inventory, slot));
-    }
-
-    @Inject(method = "setCount", at=@At("RETURN"))
-    public void propagate_update(int count, CallbackInfo ci){
-        if (CarpetShadowSettings.shadowItemUpdateFix) {
-            Globals.toUpdate.addAll(carpet_shadow$getInventories());
-        }
-    }
-
-
+  }
 }

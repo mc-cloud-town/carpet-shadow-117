@@ -14,24 +14,22 @@ import java.util.function.BooleanSupplier;
 
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin {
-
-    @Inject(method = "tick", at=@At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;tickWorlds(Ljava/util/function/BooleanSupplier;)V", shift = At.Shift.AFTER))
-    public void afterWorldTick(BooleanSupplier shouldKeepTicking, CallbackInfo ci){
-        try{
-            if(CarpetShadowSettings.shadowItemUpdateFix) {
-                for (Inventory inv : Globals.toUpdate) {
-                    try {
-                        inv.markDirty();
-                    } catch (Throwable ex) {
-                        CarpetShadow.LOGGER.error("Caught Exception while propagating shadow stack updates: ", ex);
-                    }
-                }
-            }
-        }catch (Throwable error){
-            CarpetShadow.LOGGER.error("Caught Exception while propagating shadow stack updates: ",error);
-        }finally {
-            Globals.toUpdate.clear();
+  @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;tickWorlds(Ljava/util/function/BooleanSupplier;)V", shift = At.Shift.AFTER))
+  public void afterWorldTick(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {
+    try {
+      if (CarpetShadowSettings.shadowItemUpdateFix) {
+        for (Inventory inv : Globals.toUpdate) {
+          try {
+            inv.markDirty();
+          } catch (Throwable ex) {
+            CarpetShadow.LOGGER.error("Caught Exception while propagating shadow stack updates: ", ex);
+          }
         }
+      }
+    } catch (Throwable error) {
+      CarpetShadow.LOGGER.error("Caught Exception while propagating shadow stack updates: ", error);
+    } finally {
+      Globals.toUpdate.clear();
     }
-
+  }
 }
