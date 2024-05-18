@@ -47,30 +47,30 @@ public abstract class ScreenHandlerMixin {
     }
   }
 
-//  TODO feat this
-//  @WrapOperation(method = "internalOnSlotClick", slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;canTakeItems(Lnet/minecraft/entity/player/PlayerEntity;)Z")),
-//    at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;quickMove(Lnet/minecraft/entity/player/PlayerEntity;I)Lnet/minecraft/item/ItemStack;"))
-//  public ItemStack fix_shift(ScreenHandler instance, PlayerEntity player, int index, Operation<ItemStack> original) {
-//    if (CarpetShadowSettings.shadowItemInventoryFragilityFix) {
-//      Slot og = instance.slots.get(index);
-//      ItemStack og_item = og.getStack();
-//      if (((ShadowItem) (Object) og_item).carpet_shadow$getShadowId() != null) {
-//        ItemStack mirror = og_item.copy();
-//        ((ShadowItem) (Object) mirror).carpet_shadow$setShadowId(((ShadowItem) (Object) og_item).carpet_shadow$getShadowId());
-//        og.setStack(mirror);
-//        ((ShifingItem) (Object) mirror).carpet_shadow$setShiftMoving(true);
-//        ItemStack ret = original.call(instance, player, index);
-//        ((ShifingItem) (Object) mirror).carpet_shadow$setShiftMoving(false);
-//        if (ret == ItemStack.EMPTY) {
-//          og_item = Globals.getByIdOrAdd(((ShadowItem) (Object) og_item).carpet_shadow$getShadowId(), og_item);
-//          og.setStack(og_item);
-//          og_item.setCount(mirror.getCount());
-//        }
-//        return ret;
-//      }
-//    }
-//    return original.call(instance, player, index);
-//  }
+  @WrapOperation(method = "internalOnSlotClick", slice = @Slice(
+    from = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;canTakeItems(Lnet/minecraft/entity/player/PlayerEntity;)Z")),
+    at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;transferSlot(Lnet/minecraft/entity/player/PlayerEntity;I)Lnet/minecraft/item/ItemStack;"))
+  public ItemStack fix_shift(ScreenHandler instance, PlayerEntity player, int index, Operation<ItemStack> original) {
+    if (CarpetShadowSettings.shadowItemInventoryFragilityFix) {
+      Slot og = instance.slots.get(index);
+      ItemStack og_item = og.getStack();
+      if (((ShadowItem) (Object) og_item).carpet_shadow$getShadowId() != null) {
+        ItemStack mirror = og_item.copy();
+        ((ShadowItem) (Object) mirror).carpet_shadow$setShadowId(((ShadowItem) (Object) og_item).carpet_shadow$getShadowId());
+        og.setStack(mirror);
+        ((ShifingItem) (Object) mirror).carpet_shadow$setShiftMoving(true);
+        ItemStack ret = original.call(instance, player, index);
+        ((ShifingItem) (Object) mirror).carpet_shadow$setShiftMoving(false);
+        if (ret == ItemStack.EMPTY) {
+          og_item = Globals.getByIdOrAdd(((ShadowItem) (Object) og_item).carpet_shadow$getShadowId(), og_item);
+          og.setStack(og_item);
+          og_item.setCount(mirror.getCount());
+        }
+        return ret;
+      }
+    }
+    return original.call(instance, player, index);
+  }
 
   @WrapOperation(method = "insertItem", slice = @Slice(
     from = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;getStack()Lnet/minecraft/item/ItemStack;", ordinal = 1)

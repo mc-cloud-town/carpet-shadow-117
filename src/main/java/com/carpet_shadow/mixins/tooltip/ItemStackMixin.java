@@ -20,7 +20,6 @@ import java.util.List;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
-
   @Inject(method = "getTooltip", at = @At("RETURN"))
   private void postToolTip(@Nullable PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir) {
     List<Text> list = cir.getReturnValue();
